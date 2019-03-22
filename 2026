@@ -1,0 +1,82 @@
+package frc.robot;
+
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
+public class Robot extends TimedRobot {
+  private static final String kDefaultAuto = "Default";
+  private static final String kCustomAuto = "My Auto";
+  private String m_autoSelected;
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+
+  DriverStation matchInfo = DriverStation.getInstance();
+
+  Joystick driver1 = new Joystick(1); //drive train driver
+ 
+  WPI_VictorSPX rearLeftMotor = new WPI_VictorSPX(1);
+  WPI_VictorSPX frontLeftMotor = new WPI_VictorSPX(2);
+  WPI_VictorSPX rearRightMotor = new WPI_VictorSPX(3);
+  WPI_VictorSPX frontRightMotor = new WPI_VictorSPX(4);
+
+  SpeedControllerGroup left = new SpeedControllerGroup(frontLeftMotor, rearLeftMotor);
+  SpeedControllerGroup right = new SpeedControllerGroup(frontRightMotor, rearRightMotor);
+
+  
+  DifferentialDrive traction = new DifferentialDrive(left, right);
+
+
+  @Override
+  public void robotInit() {
+    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
+    m_chooser.addOption("My Auto", kCustomAuto);
+    SmartDashboard.putData("Auto choices", m_chooser);
+  }
+
+  @Override
+  public void robotPeriodic() {
+  }
+
+ 
+  @Override
+  public void autonomousInit() {
+    m_autoSelected = m_chooser.getSelected();
+    // autoSelected = SmartDashboard.getString("Auto Selector",
+    // defaultAuto);
+    System.out.println("Auto selected: " + m_autoSelected);
+  }
+
+  
+  @Override
+  public void autonomousPeriodic() {
+    
+  traction.arcadeDrive(driver1.getY(), driver1.getX());
+
+  }
+
+ 
+  @Override
+  public void teleopPeriodic() {
+
+  traction.arcadeDrive(driver1.getY(), driver1.getX());
+  
+  
+  }
+
+ 
+  @Override
+  public void testPeriodic() {
+  }
+
+  @Override
+  public void startCompetition() {
+
+  }
+}
